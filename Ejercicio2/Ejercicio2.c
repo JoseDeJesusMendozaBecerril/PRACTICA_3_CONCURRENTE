@@ -15,7 +15,7 @@ double my_log(double x, int base) {
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 20;
+const int ARRAY_TAM = 40;
 
 int pqtEnvio=0;
 int pqtRecibo=0;
@@ -96,11 +96,6 @@ int main(int argc, char *argv[])
       int L = 2;
       for(int i = 0; i < numPasos; i++){
           if(my_rank % L == 0 || my_rank == 0 ){ //RECEPCIONES
-               //printf("\nSoy %d y voy a recibir de %d en el Paso %d \n",my_rank,my_rank+residuo,i);
-               //MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-               //sumaM =sumaM + pqtRecibo;
-               //suma = pqtEnvio + pqtRecibo;
-               //printf("Soy %d y recibo paquete con  %d de %d en el paso %d\n",my_rank,sumaM,my_rank+residuo );
                printf("Soy %d recibi de %d en el paso %d \n",my_rank,my_rank + residuo,i);
           }
           residuo = residuo * 2;
@@ -146,13 +141,10 @@ int main(int argc, char *argv[])
       for (int i = 0; i < numPasos; i++) {
           if(my_rank % M == residuo ){ //ENVIOS
                printf("Soy %d y voy a enviar a %d en el paso %d \n",my_rank,my_rank - residuo,i);
-               //pqtRecibo=suma;
-               MPI_Send(&pqtRecibo,1, MPI_INT, my_rank-residuo, 0, MPI_COMM_WORLD);
+              MPI_Send(&pqtRecibo,1, MPI_INT, my_rank-residuo, 0, MPI_COMM_WORLD);
 
           }
           if(my_rank % L == 0 ){ //RECEPCIONES
-              //MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-              //suma = suma + pqtRecibo;
               printf("Soy %d recibi de %d en el paso %d \n",my_rank,my_rank + residuo,i);
           }
           residuo = residuo * 2;
