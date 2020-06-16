@@ -1,0 +1,87 @@
+//enviar
+M = 2;
+for(i = 1; i <= numPasos; i++){
+    residuo = 1;
+
+    if(pid % M == residuo ){
+        send()
+    }
+
+
+
+
+}
+
+
+
+//recibir
+L=2;
+for(i=1; i <= numPasos; i++){
+    L = L * i;
+
+    if(pid % L == 0 || pid==0){
+        recive()
+    }
+
+}
+
+
+//---------------- EMPIEZA EL TIKI TAKA -----------------------
+int M = 2;
+int residuo=1;
+int pqtEnvio=1;
+//ENVIOS
+for (int i = 0; i < numPasos; i++) {
+    if(my_rank % M == residuo ){
+        //printf("Soy %d y voy a enviar a %d en el Paso %d el valor de %d  \n",my_rank,my_rank - residuo,i,pqtEnvio);
+    }
+    residuo = residuo * 2;
+    M = M*2;
+}
+
+//RECEPCIONES
+int L = 2;
+for(int i = 0; i < numPasos; i++){
+    if(my_rank % L == 0 || my_rank == 0){
+        pqtEnvio = arreglo[my_rank] + pqtEnvio;
+        //printf("Soy %d y voy a recibir de %d en el Paso %d \n",my_rank,my_rank+1,i);
+    }
+    L = L * 2;
+}
+
+
+
+
+//---------------- EMPIEZA EL TIKI TAKA -----------------------
+int M = 2;
+int residuo=1;
+
+int pqtEnvio=0;
+int pqtRecibo=0;
+//ENVIOS
+for (int i = 0; i < numPasos; i++) {
+    if(my_rank % M == residuo ){
+         pqtEnvio=suma;
+         printf("Soy %d y voy a enviar a %d en el paso %d el valor de %d  \n",my_rank,my_rank - residuo,i,pqtEnvio);
+         MPI_Send(&pqtEnvio,1, MPI_INT, my_rank-residuo, 0, MPI_COMM_WORLD);
+
+    }
+    residuo = residuo * 2;
+    M = M*2;
+}
+
+//RECEPCIONES
+residuo=1;
+int L = 2;
+
+for(int i = 0; i < numPasos; i++){
+    if(my_rank % L == 0 ){
+        printf("Soy %d y voy a recibir de %d en el Paso %d \n",my_rank,my_rank+1,i);
+        MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        suma = pqtEnvio + pqtRecibo;
+        //printf("Soy %d Paquete recibo %d de %d\n",my_rank,pqtEnvio,my_rank + residuo );
+
+    }
+    residuo = residuo * 2;
+    L = L * 2;
+}
