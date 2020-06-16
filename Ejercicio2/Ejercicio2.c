@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
           MPI_Send(&suma, 1, MPI_INT, MAESTRO, 0, MPI_COMM_WORLD);
       }
 
-      int M = 3;
+      int M = 2;
       int L=2;
       int residuo=1;
 
