@@ -26,7 +26,6 @@ for(i=1; i <= numPasos; i++){
 }
 
 
-//---------------- EMPIEZA EL TIKI TAKA -----------------------
 int M = 2;
 int residuo=1;
 int pqtEnvio=1;
@@ -52,7 +51,6 @@ for(int i = 0; i < numPasos; i++){
 
 
 
-//---------------- EMPIEZA EL TIKI TAKA -----------------------
 int M = 2;
 int residuo=1;
 
