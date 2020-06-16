@@ -136,8 +136,7 @@ int main(int argc, char *argv[])
           MPI_Send(&suma, 1, MPI_INT, MAESTRO, 0, MPI_COMM_WORLD);
       }
 
-      //---------------- EMPIEZA EL TIKI TAKA -----------------------
-      int M = 2;
+      int M = 3;
       int L=2;
       int residuo=1;
 
