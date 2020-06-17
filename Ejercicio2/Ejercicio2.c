@@ -108,21 +108,22 @@ int main(int argc, char *argv[]){
     //ENVIOS
     for (int i = 0; i < numPasos; i++) {
         if(my_rank % L == 0 ){
-            MPI_Recv(&pqtRecibo,1, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            //sumaNuevo=sumaNuevo+pqtRecibo;
-            printf("Soy %d y voy a recibir de %d en el Paso %d valor %d ahora tengo %d \n",my_rank,my_rank+residuo,i,pqtRecibo,sumaNuevo);
-            //pqtEnvio=sumaNuevo;
+            MPI_Recv(&pqtRecibo,1, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+            pqtEnvio=pqtRecibo+sumaNuevo;
+            printf("Soy %d y voy a recibir de %d en el Paso %d valor %d ahora tengo %d \n",my_rank,my_rank+residuo,i,pqtRecibo,pqtEnvio);
+
         }
+
         if(my_rank % M == residuo ){
              pqtEnvio=sumaNuevo+pqtRecibo;
-             MPI_Send(&pqtEnvio,1, MPI_INT, my_rank - residuo, 0, MPI_COMM_WORLD);
+             MPI_Send(&pqtEnvio,1, MPI_INT, my_rank - residuo,0,MPI_COMM_WORLD);
              printf("Soy %d y voy a enviar a %d en el paso %d el valor de %d  \n",my_rank,my_rank - residuo,i,pqtEnvio);
              //pqtEnvio=sumaNuevo;
         }
-
         residuo = residuo * 2;
         M = M*2;
         L = L * 2;
+
     }
 
 
