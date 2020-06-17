@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
 
    tamSubarreglo = ARRAY_TAM / (comm_size); // Cómo saber cuántos tocan para cada proceso?
 
+
+
    if (my_rank == MAESTRO) { // Soy el procesador maestro.
        printf("Comm size %d\n",comm_size);
        printf("Tam subarreglo %d\n",tamSubarreglo);
