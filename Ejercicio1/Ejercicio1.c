@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
       int sumaM=0;
       for(int i=0; i <tamSubarreglo; i++ ){
          sumaM+=arreglo[i];
+         sleep(1);
       }
       //printf("\nSoy process PID %d sumare desde %d va a sumar un total de %d elementos ",my_rank,inicio,tamSubarreglo);
       //printf("\nSoy proceso con PID %d sume total %d\n",my_rank,sumaM);
