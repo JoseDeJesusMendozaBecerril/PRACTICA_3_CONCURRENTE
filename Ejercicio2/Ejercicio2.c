@@ -14,7 +14,7 @@ double my_log(double x, int base) {
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 20;
+const int ARRAY_TAM = 1000000;
 
 
 int sumaM=0;

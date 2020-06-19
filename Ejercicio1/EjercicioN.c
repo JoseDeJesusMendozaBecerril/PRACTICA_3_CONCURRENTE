@@ -11,7 +11,7 @@
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 100;//cien millones
+const long ARRAY_TAM = 100;//cien millones
 
 int main(int argc, char *argv[])
 {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
       inicio=0;
       if(my_rank < (ARRAY_TAM % (comm_size))){ tamSubarreglo++;}
       else{tamSubarreglo = ARRAY_TAM / (comm_size);}
-      int sumaM=0;
+      long int sumaM=0;
       for(int i=0; i <tamSubarreglo; i++ ){
          sumaM+=arreglo[i];
       }
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
           final = final + parcial;
       }
 
-      printf("\nResultado final %d\n",final + sumaM);
+      printf("\nResultado final %ld\n",final + sumaM);
 
       free(arreglo);
    }
@@ -92,10 +92,9 @@ int main(int argc, char *argv[])
 
       // Debe sumar los elementos de arreglo
       // Debe enviar un mensaje al MAESTRO con el resultado.
-      int suma=0;
+      long suma=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-         suma+=(((arreglo[i]*arreglo[i])/arreglo[i]*arreglo[i]/arreglo[i])*arreglo[i]/arreglo[i]);
-         sleep(1);
+         suma+=arreglo[i];
       }
       //printf("Soy proceso con PID %d sume total %d\n",my_rank,suma);
 
