@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
       // Debe enviar un mensaje al MAESTRO con el resultado.
       int suma=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-         suma+=(((arreglo[i]*arreglo[i])/arreglo[i]*arreglo[i]/arreglo[i])*arreglo[i]/arreglo[i]);
+         suma+=arreglo[i];
          sleep(1);
       }
       //printf("Soy proceso con PID %d sume total %d\n",my_rank,suma);
