@@ -5,13 +5,12 @@
 /*
     En esta version el usuario puede seleccionar cualquier numero de procesos no importa si divide o no al array
     y el proceso maestro tambien ayuda a la suma de los elementos
-
 */
 
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 100;//cien millones
+const int ARRAY_TAM = 100;//1 millon
 
 int main(int argc, char *argv[])
 {
