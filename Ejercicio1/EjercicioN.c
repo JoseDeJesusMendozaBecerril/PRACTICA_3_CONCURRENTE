@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <mpi.h> /* Para la funciones de MPI, etc. */
 /*
     En esta version el usuario puede seleccionar cualquier numero de procesos no importa si divide o no al array
     y el proceso maestro tambien ayuda a la suma de los elementos
+
 */
 
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 10000000;
+const long ARRAY_TAM = 100;//cien millones
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
 
       // Llenarlo con los número 1, 2,...,ARRAY_TAM
       for (int i = 0; i < ARRAY_TAM; i++) arreglo[i] = i + 1;
-      
+      //for (int i = 0; i < ARRAY_TAM; i++) printf("%d ",arreglo[i]);
+
       // Para cada proceso esclavo (q=1,...,comm_size) enviarle solamente los
       // elementos de la parte del arreglo que le corresponde.
 
@@ -46,26 +47,30 @@ int main(int argc, char *argv[])
       for(int q = 1; q <= comm_size - 1; q++){ /* 1 2 3 4 ... numprocesos */
           if(q <= (ARRAY_TAM % (comm_size))) tamSubarreglo++;
           if (q == 1) inicio = tamSubarreglo;
+          //printf("\nLe mando a process PID %d desde %d va a sumar un total de %d elementos ",q,inicio,tamSubarreglo);
           MPI_Send(&arreglo[inicio], tamSubarreglo, MPI_INT, q, 0, MPI_COMM_WORLD); //pos inicio arr , numElementos , tipo dato , proceso dest , 0 , comunicador
-          inicio = inicio + tamSubarreglo;
+          inicio = inicio + tamSubarreglo; //** check
           tamSubarreglo = ARRAY_TAM / (comm_size);
+
       }
 
       // El maestro si hará cálculo.
       inicio=0;
       if(my_rank < (ARRAY_TAM % (comm_size))){ tamSubarreglo++;}
       else{tamSubarreglo = ARRAY_TAM / (comm_size);}
-      long sumaM=0;
+      long int sumaM=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-        for(int j=0;j<1000;j++);
-        sumaM+=(arreglo[i]*arreglo[i])/arreglo[i];
+         sumaM+=arreglo[i];
       }
+      //printf("\nSoy process PID %d sumare desde %d va a sumar un total de %d elementos ",my_rank,inicio,tamSubarreglo);
+      //printf("\nSoy proceso con PID %d sume total %d\n",my_rank,sumaM);
+
       // Recibir el resultado parcial de cada esclavo (q=1,...,comm_size)
       // y acumularlo para dar el resultado final.
-      long parcial=0;
-      long final=0;
+      int parcial=0;
+      int final=0;
       for(int q = 1; q <= comm_size - 1; q++){ /* 1 2 3 4 ... numprocesos */
-          MPI_Recv(&parcial, 1, MPI_LONG, q, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          MPI_Recv(&parcial, 1, MPI_INT, q, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
           final = final + parcial;
       }
 
@@ -89,12 +94,12 @@ int main(int argc, char *argv[])
       // Debe enviar un mensaje al MAESTRO con el resultado.
       long suma=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-          for(int j=0;j<1000;j++);
-         suma+=(arreglo[i]*arreglo[i])/arreglo[i];
+         suma+=arreglo[i];
       }
+      //printf("Soy proceso con PID %d sume total %d\n",my_rank,suma);
 
       for(int i=0; i < comm_size - 1 ; i++ ){
-          MPI_Send(&suma, 1, MPI_LONG, MAESTRO, 0, MPI_COMM_WORLD);
+          MPI_Send(&suma, 1, MPI_INT, MAESTRO, 0, MPI_COMM_WORLD);
       }
 
 

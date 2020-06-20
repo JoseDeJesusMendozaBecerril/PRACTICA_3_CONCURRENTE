@@ -87,12 +87,14 @@ int main(int argc, char *argv[])
       int L = 2;
       for(int i = 0; i < numPasos; i++){
           if(my_rank % L == 0 || my_rank == 0 ){ //RECEPCIONES
+               //printf("\nSoy %d y voy a recibir de %d en el Paso %d \n",my_rank,my_rank+residuo,i);
                MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_LONG,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                sumaM =sumaM + pqtRecibo;
           }
           residuo = residuo * 2;
           L = L * 2;
       }
+
       printf("\nResultado final %ld\n",sumaM);
 
       free(arreglo);
@@ -135,21 +137,6 @@ int main(int argc, char *argv[])
       }
       free(arreglo);
    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    MPI_Finalize();
 
    return 0;
