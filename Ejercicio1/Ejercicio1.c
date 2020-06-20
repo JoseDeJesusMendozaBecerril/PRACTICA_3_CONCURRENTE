@@ -38,8 +38,7 @@ int main(int argc, char *argv[])
 
       // Llenarlo con los número 1, 2,...,ARRAY_TAM
       for (int i = 0; i < ARRAY_TAM; i++) arreglo[i] = i + 1;
-      //for (int i = 0; i < ARRAY_TAM; i++) printf("%d ",arreglo[i]);
-
+      
       // Para cada proceso esclavo (q=1,...,comm_size) enviarle solamente los
       // elementos de la parte del arreglo que le corresponde.
 
@@ -48,11 +47,9 @@ int main(int argc, char *argv[])
       for(int q = 1; q <= comm_size - 1; q++){ /* 1 2 3 4 ... numprocesos */
           if(q <= (ARRAY_TAM % (comm_size))) tamSubarreglo++;
           if (q == 1) inicio = tamSubarreglo;
-          //printf("\nLe mando a process PID %d desde %d va a sumar un total de %d elementos ",q,inicio,tamSubarreglo);
           MPI_Send(&arreglo[inicio], tamSubarreglo, MPI_INT, q, 0, MPI_COMM_WORLD); //pos inicio arr , numElementos , tipo dato , proceso dest , 0 , comunicador
-          inicio = inicio + tamSubarreglo; //** check
+          inicio = inicio + tamSubarreglo;
           tamSubarreglo = ARRAY_TAM / (comm_size);
-
       }
 
       // El maestro si hará cálculo.
@@ -61,13 +58,9 @@ int main(int argc, char *argv[])
       else{tamSubarreglo = ARRAY_TAM / (comm_size);}
       long sumaM=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-          //sleep(1);
-        for(int j=0;j<100;j++);
+        for(int j=0;j<1000;j++);
         sumaM+=(arreglo[i]*arreglo[i])/arreglo[i];
       }
-      //printf("\nSoy process PID %d sumare desde %d va a sumar un total de %d elementos ",my_rank,inicio,tamSubarreglo);
-      //printf("\nSoy proceso con PID %d sume total %d\n",my_rank,sumaM);
-
       // Recibir el resultado parcial de cada esclavo (q=1,...,comm_size)
       // y acumularlo para dar el resultado final.
       long parcial=0;
@@ -97,8 +90,7 @@ int main(int argc, char *argv[])
       // Debe enviar un mensaje al MAESTRO con el resultado.
       long suma=0;
       for(int i=0; i <tamSubarreglo; i++ ){
-          for(int j=0;j<100000;j++);
-          //sleep(1);
+          for(int j=0;j<1000;j++);
          suma+=(arreglo[i]*arreglo[i])/arreglo[i];
       }
       //printf("Soy proceso con PID %d sume total %d\n",my_rank,suma);

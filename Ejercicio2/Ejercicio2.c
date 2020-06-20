@@ -16,10 +16,10 @@ double my_log(double x, int base) {
 #define MAESTRO 0
 
 // Tamaño del arreglo
-const int ARRAY_TAM = 100000;
+const int ARRAY_TAM = 10000000;
 
-int pqtEnvio=0;
-int pqtRecibo=0;
+long pqtEnvio=0;
+long pqtRecibo=0;
 
 int main(int argc, char *argv[])
 {
@@ -52,8 +52,7 @@ int main(int argc, char *argv[])
 
       // Llenarlo con los número 1, 2,...,ARRAY_TAM
       for (int i = 0; i < ARRAY_TAM; i++) arreglo[i] = i + 1;
-      //for (int i = 0; i < ARRAY_TAM; i++) printf("%d ",arreglo[i]);
-
+      
       // Para cada proceso esclavo (q=1,...,comm_size) enviarle solamente los
       // elementos de la parte del arreglo que le corresponde.
 
@@ -62,9 +61,8 @@ int main(int argc, char *argv[])
       for(int q = 1; q <= comm_size - 1; q++){ /* 1 2 3 4 ... numprocesos */
           if(q <= (ARRAY_TAM % (comm_size))) tamSubarreglo++;
           if (q == 1) inicio = tamSubarreglo;
-          //printf("\nLe mando a process PID %d desde %d va a sumar un total de %d elementos ",q,inicio,tamSubarreglo);
           MPI_Send(&arreglo[inicio], tamSubarreglo, MPI_INT, q, 0, MPI_COMM_WORLD); //pos inicio arr , numElementos , tipo dato , proceso dest , 0 , comunicador
-          inicio = inicio + tamSubarreglo; //** check
+          inicio = inicio + tamSubarreglo; 
           tamSubarreglo = ARRAY_TAM / (comm_size);
 
       }
@@ -73,24 +71,12 @@ int main(int argc, char *argv[])
       inicio=0;
       if(my_rank < (ARRAY_TAM % (comm_size))){ tamSubarreglo++;}
       else{tamSubarreglo = ARRAY_TAM / (comm_size);}
-      int sumaM=0;
+      long sumaM=0;
       for(int i=0; i <tamSubarreglo; i++ ){
         for(int j=0;j<1000;j++);
         sumaM+=(arreglo[i]*arreglo[i])/arreglo[i];
         
       }
-      //printf("\nSoy process PID %d sumare desde %d va a sumar un total de %d elementos ",my_rank,inicio,tamSubarreglo);
-      //****printf("\nSoy proceso con PID %d sume total %d\n",my_rank,sumaM);
-
-      // Recibir el resultado parcial de cada esclavo (q=1,...,comm_size)
-      // y acumularlo para dar el resultado final.
-      //int parcial=0;
-      //int final=0;
-      //for(int q = 1; q <= comm_size - 1; q++){ /* 1 2 3 4 ... numprocesos */
-      //    MPI_Recv(&parcial, 1, MPI_INT, q, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      //    final = final + parcial;
-      //}
-
 
 
 
@@ -101,19 +87,13 @@ int main(int argc, char *argv[])
       int L = 2;
       for(int i = 0; i < numPasos; i++){
           if(my_rank % L == 0 || my_rank == 0 ){ //RECEPCIONES
-               //printf("\nSoy %d y voy a recibir de %d en el Paso %d \n",my_rank,my_rank+residuo,i);
-               MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+               MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_LONG,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                sumaM =sumaM + pqtRecibo;
-               //suma = pqtEnvio + pqtRecibo;
-               //printf("Soy %d y recibo paquete con  %d de %d en el paso %d\n",my_rank,sumaM,my_rank+residuo );
-               //printf("Soy %d recibi de %d en el paso %d \n",my_rank,my_rank + residuo,i);
           }
           residuo = residuo * 2;
           L = L * 2;
       }
-
-
-      printf("\nResultado final %d\n",sumaM);
+      printf("\nResultado final %ld\n",sumaM);
 
       free(arreglo);
    }
@@ -131,45 +111,28 @@ int main(int argc, char *argv[])
 
       // Debe sumar los elementos de arreglo
       // Debe enviar un mensaje al MAESTRO con el resultado.
-      int suma=0;
+      long suma=0;
       for(int i=0; i <tamSubarreglo; i++ ){  
         for(int j=0;j<1000;j++);
         suma+=(arreglo[i]*arreglo[i])/arreglo[i];
       }
-      //**printf("Soy proceso con PID %d sume total %d\n",my_rank,suma);
-
-      //for(int i=0; i < comm_size - 1 ; i++ ){
-      //    MPI_Send(&suma, 1, MPI_INT, MAESTRO, 0, MPI_COMM_WORLD);
-      //}
-
       int M = 2;
       int L=2;
       int residuo=1;
-
-
-
       //ENVIOS
       for (int i = 0; i < numPasos; i++) {
           if(my_rank % M == residuo ){ //ENVIOS
-               //printf("Soy %d y voy a enviar a %d en el paso %d \n",my_rank,my_rank - residuo,i);
                pqtRecibo=suma;
-               MPI_Send(&pqtRecibo,1, MPI_INT, my_rank-residuo, 0, MPI_COMM_WORLD);
-
+               MPI_Send(&pqtRecibo,1, MPI_LONG, my_rank-residuo, 0, MPI_COMM_WORLD);
           }
           if(my_rank % L == 0 ){ //RECEPCIONES
-              MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_INT,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+              MPI_Recv(&pqtRecibo,tamSubarreglo, MPI_LONG,my_rank + residuo, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
               suma = suma + pqtRecibo;
-              //printf("Soy %d recibi de %d en el paso %d \n",my_rank,my_rank + residuo,i);
           }
           residuo = residuo * 2;
           M = M*2;
           L=L*2;
-
       }
-
-
-
-
       free(arreglo);
    }
 
